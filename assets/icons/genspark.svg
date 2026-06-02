@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Genspark">
+  <rect x="1" y="1" width="22" height="22" rx="5.5" fill="#0B0B0B"/>
+  <!-- sparkles -->
+  <path fill="#FFFFFF" d="M7.2 7.8l.55 1.68 1.77.01-1.43 1.04.55 1.68L7.2 10.9l-1.44 1.04.55-1.68-1.43-1.04 1.77-.01.55-1.68z"/>
+  <path fill="#FFFFFF" d="M14.6 6.2l.4 1.22 1.28.01-1.04.75.4 1.22-1.04-.75-1.04.75.4-1.22-1.04-.75 1.28-.01.4-1.22z"/>
+  <path fill="#FFFFFF" d="M16.8 10.4l.32.98.98.01-.79.57.32.98-.79-.57-.79.57.32-.98-.79-.57.98-.01.32-.98z"/>
+  <!-- bottom bar -->
+  <rect x="5" y="17.2" width="14" height="3.2" rx="1.6" fill="#FFFFFF"/>
+</svg>
