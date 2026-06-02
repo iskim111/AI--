@@ -10,6 +10,7 @@
   const mainContent = document.getElementById('mainContent');
   const toast = document.getElementById('toast');
   const toastMessage = document.getElementById('toastMessage');
+  let xlsxLoadPromise = null;
 
   let activeTab = visibleTabs[0]?.id;
 
@@ -83,18 +84,17 @@
           ${tab.title ? `<h2>${tab.title}</h2>` : ''}
           ${tab.description ? `<p class="panel-desc">${tab.description}</p>` : ''}
         </div>` : ''}
-        ${tab.sections.map(renderSection).join('')}
+        ${tab.sections.map((section, index) => renderSection(section, `${tab.id}-${index}`)).join('')}
       </div>
     `).join('');
 
     bindCopyButtons();
     bindCodeToggle();
     bindPromptEditors();
-    bindTabActions();
     bindExcelUpload();
   }
 
-  function renderSection(section) {
+  function renderSection(section, scopeId) {
     switch (section.type) {
       case 'excel-upload': return renderExcelUploadSection(section);
       case 'action': return renderActionSection(section);
@@ -104,7 +104,7 @@
       case 'alert': return renderAlertSection(section);
       case 'tip': return renderTipSection(section);
       case 'note': return renderNoteSection(section);
-      case 'prompts': return renderPromptsSection(section);
+      case 'prompts': return renderPromptsSection(section, scopeId);
       case 'vba-lab': return renderVbaLabSection(section);
       case 'docs': return renderDocsSection(section);
       case 'workflow': return renderWorkflowSection(section);
@@ -250,12 +250,12 @@
     </div>`;
   }
 
-  function renderPromptsSection(section) {
+  function renderPromptsSection(section, scopeId) {
     return `<div class="section">
       ${section.title ? sectionTitle(section, section.icon) : ''}
       ${section.hint ? `<div class="prompt-copy-hint">☞ 프롬프트 복사해서 Codex 채팅창에 붙여넣기</div>` : ''}
-      <div class="prompt-list">
-        ${section.prompts.map((p, i) => renderPromptCard(p, `${section.title}-${i}`)).join('')}
+      <div class="prompt-list${section.className ? ` ${section.className}` : ''}">
+        ${section.prompts.map((p, i) => renderPromptCard(p, `${scopeId || 'section'}-${section.title || 'prompts'}-${i}`)).join('')}
       </div>
     </div>`;
   }
@@ -282,6 +282,11 @@
           <span class="material-icons-round">content_copy</span>프롬프트 복사
         </button>
       </div>
+      ${prompt.notePad ? `
+      <div class="prompt-note-box">
+        <label class="prompt-note-label" for="note-${id}">메모</label>
+        <textarea class="prompt-note" id="note-${id}" data-note-id="${id}" placeholder="여기에 메모를 적으세요.">${escapeHtml(getStoredPromptNote(id))}</textarea>
+      </div>` : ''}
     </div>`;
   }
 
@@ -297,6 +302,18 @@
     }
   }
 
+  function getPromptNoteStorageKey(id) {
+    return `prompt-note:${id}`;
+  }
+
+  function getStoredPromptNote(id) {
+    try {
+      return localStorage.getItem(getPromptNoteStorageKey(id)) || '';
+    } catch {
+      return '';
+    }
+  }
+
   function bindPromptEditors() {
     document.querySelectorAll('.prompt-edit-btn').forEach(btn => {
       btn.addEventListener('click', () => togglePromptEditor(btn.dataset.promptId, true));
@@ -309,23 +326,12 @@
     document.querySelectorAll('.prompt-save-btn').forEach(btn => {
       btn.addEventListener('click', () => savePromptEditor(btn.dataset.promptId));
     });
-  }
 
-  function bindTabActions() {
-    document.querySelectorAll('.tab-action-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (btn.dataset.action === 'hide-dashboard-tab') {
-          hideTab('seoul-dashboard');
-          return;
-        }
-        if (btn.dataset.action === 'open-dashboard-tab') {
-          if (visibleTabs.some(tab => tab.id === 'seoul-dashboard')) {
-            switchTab('seoul-dashboard');
-            showToast('대시보드 탭으로 이동했습니다');
-          } else {
-            showToast('대시보드 탭이 현재 숨겨져 있습니다');
-          }
-        }
+    document.querySelectorAll('.prompt-note').forEach(note => {
+      note.addEventListener('input', () => {
+        try {
+          localStorage.setItem(getPromptNoteStorageKey(note.dataset.noteId), note.value);
+        } catch {}
       });
     });
   }
@@ -349,16 +355,14 @@
       if (columns) columns.innerHTML = '';
 
       try {
-        if (!window.XLSX) {
-          throw new Error('엑셀 라이브러리를 불러오지 못했습니다.');
-        }
+        const xlsx = await ensureXlsx();
 
         const buffer = await file.arrayBuffer();
-        const workbook = window.XLSX.read(buffer, { type: 'array' });
+        const workbook = xlsx.read(buffer, { type: 'array' });
         const firstSheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[firstSheetName];
-        const rows = window.XLSX.utils.sheet_to_json(sheet, { defval: '' });
-        const headerRows = window.XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+        const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' });
+        const headerRows = xlsx.utils.sheet_to_json(sheet, { header: 1, defval: '' });
         const headers = rows.length
           ? Object.keys(rows[0])
           : (headerRows[0] || []).filter(Boolean);
@@ -397,6 +401,33 @@
     });
   }
 
+  function ensureXlsx() {
+    if (window.XLSX) return Promise.resolve(window.XLSX);
+    if (xlsxLoadPromise) return xlsxLoadPromise;
+
+    xlsxLoadPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      script.async = true;
+      script.onload = () => {
+        if (window.XLSX) {
+          resolve(window.XLSX);
+        } else {
+          reject(new Error('엑셀 라이브러리를 초기화하지 못했습니다.'));
+        }
+      };
+      script.onerror = () => {
+        reject(new Error('엑셀 라이브러리를 내려받지 못했습니다. 인터넷 연결을 확인해 주세요.'));
+      };
+      document.head.appendChild(script);
+    }).catch(error => {
+      xlsxLoadPromise = null;
+      throw error;
+    });
+
+    return xlsxLoadPromise;
+  }
+
   function getHiddenTabIds() {
     const ids = new Set(defaultHiddenTabIds);
     try {
@@ -416,25 +447,14 @@
     } catch {}
   }
 
-  function hideTab(tabId) {
-    hiddenTabIds.add(tabId);
-    saveHiddenTabIds();
-    visibleTabs = getVisibleTabs();
-    if (activeTab === tabId) {
-      activeTab = visibleTabs[0]?.id;
-    }
-    renderTabs();
-    renderPanels();
-    switchTab(activeTab);
-    showToast('대시보드 탭이 삭제되었습니다');
-  }
-
   function togglePromptEditor(id, editing) {
     const body = document.getElementById(`prompt-${id}`);
     const editor = document.getElementById(`editor-${id}`);
     const editBtn = document.querySelector(`.prompt-edit-btn[data-prompt-id="${id}"]`);
     const saveBtn = document.querySelector(`.prompt-save-btn[data-prompt-id="${id}"]`);
     const cancelBtn = document.querySelector(`.prompt-cancel-btn[data-prompt-id="${id}"]`);
+    const row = body ? body.closest('.prompt-body-row') : null;
+    const copyBtn = row ? row.querySelector('.copy-btn') : null;
     if (!body || !editor || !editBtn || !saveBtn || !cancelBtn) return;
 
     body.classList.toggle('hidden', editing);
@@ -442,6 +462,8 @@
     editBtn.classList.toggle('hidden', editing);
     saveBtn.classList.toggle('hidden', !editing);
     cancelBtn.classList.toggle('hidden', !editing);
+    if (row) row.classList.toggle('editing', editing);
+    if (copyBtn) copyBtn.classList.toggle('hidden', editing);
 
     if (editing) {
       editor.focus();

@@ -620,6 +620,27 @@ body {
 
 .prompt-card:hover { border-color: var(--primary-soft); }
 
+.prompt-list--program-builder .prompt-card {
+  min-height: 500px;
+}
+
+.prompt-list--program-builder {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2.5fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.prompt-list--program-builder .prompt-body-row {
+  display: block;
+}
+
+.prompt-list--program-builder .prompt-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .prompt-card-header {
   display: flex;
   align-items: center;
@@ -691,17 +712,66 @@ body {
   line-height: 1.6;
 }
 
+.prompt-list--program-builder .prompt-body {
+  min-height: 220px;
+  margin-bottom: 14px;
+  max-height: none;
+}
+
 .prompt-editor {
   flex: 1;
   min-height: 220px;
+  width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: 12px;
-  font: inherit;
+  font-family: inherit;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   line-height: 1.6;
   resize: vertical;
   background: #fffdf8;
+}
+
+.prompt-list--program-builder .prompt-editor {
+  min-height: 220px;
+  margin-bottom: 14px;
+}
+
+.prompt-list--program-builder .copy-btn {
+  align-self: auto;
+}
+
+.prompt-note-box {
+  padding: 0 16px 16px;
+  margin-top: auto;
+}
+
+.prompt-note-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.prompt-note {
+  display: block;
+  width: 100%;
+  min-height: 140px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.prompt-body-row.editing {
+  display: block;
 }
 
 .prompt-body .prompt-em {
@@ -1023,6 +1093,12 @@ body {
 }
 
 /* Responsive */
+@media (max-width: 1100px) {
+  .prompt-list--program-builder {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 640px) {
   .site-header { padding: 24px 16px; }
   .main-content { padding: 24px 16px 48px; }
@@ -1031,4 +1107,5 @@ body {
   .app-link-grid--cols-2,
   .app-link-grid--cols-3,
   .app-link-grid--cols-4 { grid-template-columns: 1fr; }
+  .prompt-list--program-builder { grid-template-columns: 1fr; }
 }

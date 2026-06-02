@@ -75,8 +75,8 @@
               brand: 'codex',
               name: 'Codex (OpenAI)',
               description: 'OpenAI 코딩 에이전트 — 터미널·클라우드에서 과제를 맡기면 저장소 분석·코드 수정·실행',
-              url: '/api/codex-download',
-              urlLabel: 'Windows용 다운로드'
+              url: 'https://openai.com/codex/get-started/',
+              urlLabel: 'Codex 시작하기'
             },
             {
               brand: 'claude',
@@ -205,7 +205,7 @@
           title: "\ud504\ub86c\ud504\ud2b8 \uc5d4\uc9c0\ub2c8\uc5b4\ub9c1 \uae30\ubcf8",
           icon: 'psychology',
           prompts: [
-            { label: "\uc6f9\uac80\uc0c9 + \uc804\ubb38\uac00 \uad00\uc810", text: "\ucd5c\uc2e0 \uc815\ubcf4\ub97c \uac80\uc0c9\ud574\uc11c \uc804\ubb38\uac00 \uad00\uc810\uc5d0\uc11c \ud575\uc2ec\ub9cc \uc815\ub9ac\ud574\uc918" },
+            { label: "\uc6f9\uac80\uc0c9 + \uc804\ubb38\uac00 \uad00\uc810", text: "\ucd5c\uc2e0 \uc815\ubcf4\ub97c \uac80\uc0c9\ud574\uc11c [[\uc804\ubb38\uac00 \uad00\uc810]]\uc5d0\uc11c \ud575\uc2ec\ub9cc \uc815\ub9ac\ud574\uc918" },
             { label: "\ubaa8\ub378\ubcc4 \ucc28\uc774 \ube44\uad50", text: "Gemini\uc640 ChatGPT\uc758 \ucc28\uc774\ub97c \ud45c\ub85c \uc815\ub9ac\ud574\uc918" },
             { label: "\uc608\uc2dc \uae30\ubc18 \uc694\uccad(Few-shot)", text: "\uc0ac\uacfc:\uacfc\uc77c\n\uace0\uc591\uc774:\ub3d9\ubb3c\n\uc7a5\ubbf8:" },
             { label: "\ub2e8\uacc4\uc801 \uc0ac\uace0 (CoT)", text: "\ub2e4\uc74c \ubb38\uc81c\ub97c \ub2e8\uacc4\uc801\uc73c\ub85c \uc0dd\uac01\ud558\uba70 \ud480\uc5b4\uc918.\n----\n\ub0b4 \ucc28\ub97c \uc138\ucc28\ub97c \ud558\ub7ec \uac00\uc57c\ud558\ub294\ub370, \uc138\ucc28\uc7a5\uae4c\uc9c0\uc758 \uac70\ub9ac\uac00 20M\uc57c. \ucc28\ub97c \uac00\uc9c0\uace0 \uac00\uc57c\ud560\uae4c, \uadf8\ub0e5 \uac78\uc5b4\uac00\ub294\uac8c \ub098\uc744\uae4c?\n\ub2f5\ub9cc \ub9d0\ud574" }
@@ -287,35 +287,36 @@
       id: 'distribution',
       label: '프로그램 만들기',
       title: '프로그램 만들기',
-      description: '업로드한 Excel 파일의 내용을 바탕으로 분포 집계와 대시보드 생성 과정을 설계합니다.',
+      description: '',
       sections: [
         {
           type: 'prompts',
           title: '',
           icon: 'edit_note',
+          className: 'prompt-list--program-builder',
           prompts: [
             {
-              label: '프로그램 만들기',
+              label: '프롬프트 1',
               tool: 'cursor',
               editable: true,
-              text: '업로드한 Excel 파일을 기반으로 대시보드를 만들어줘.\n\n[진행 순서]\n1. 먼저 시트명, 컬럼명, 데이터 건수, 결측치, 주요 범주형 컬럼을 확인해.\n2. 대시보드에 적합한 집계 항목을 스스로 정리해.\n3. 성별, 연령대, 지역, 복지관, 장애구분 기준 분포를 우선 집계해.\n4. 필요한 경우 연령대 구간, 지역 정리, 결측치 처리 같은 전처리도 포함해.\n\n[대시보드 구성]\n1. KPI 3~5개\n2. 분포 요약 표\n3. 막대그래프, 원형그래프 등 핵심 차트\n4. 결과표와 필터 또는 구분 기준\n\n[결과물]\n1. 브라우저 기반 대시보드 또는 실행 가능한 코드\n2. 필요하면 Excel 요약 결과 파일도 함께 저장\n3. 실행 방법과 결과 파일 위치까지 함께 설명해'
+              text: '',
+              notePad: true
+            },
+            {
+              label: '프롬프트 2',
+              tool: 'cursor',
+              editable: true,
+              text: '',
+              notePad: true
+            },
+            {
+              label: '프롬프트 3',
+              tool: 'cursor',
+              editable: true,
+              text: '',
+              notePad: true
             }
           ]
-        }
-      ]
-    },
-    {
-      id: 'seoul-dashboard',
-      label: '대시보드',
-      title: '서울 구별 장애인 거주 대시보드',
-      description: '주소에서 추출한 서울 구 기준 거주현황과 장애유형 분포를 현재 웹 페이지 안에서 바로 확인합니다.',
-      sections: [
-        {
-          type: 'embed',
-          title: '대시보드 보기',
-          icon: 'dashboard',
-          description: '아래 화면은 생성된 서울 구별 대시보드 HTML을 현재 페이지 안에 불러온 것입니다.',
-          src: 'outputs/dashboard/seoul_district_dashboard.html?v=20260602-2'
         }
       ]
     },

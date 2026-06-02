@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tetris</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <p class="eyebrow">Mini Game</p>
+      <h1>Tetris</h1>
+      <p class="subtitle">브라우저에서 바로 플레이할 수 있는 테트리스입니다.</p>
+    </section>
+
+    <section class="game-layout">
+      <div class="board-wrap">
+        <canvas id="board" width="300" height="600" aria-label="테트리스 게임 보드"></canvas>
+        <div id="overlay" class="overlay">시작 버튼 또는 스페이스바를 눌러 시작</div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="panel">
+          <h2>점수</h2>
+          <div class="stats">
+            <div class="stat"><span>점수</span><strong id="score">0</strong></div>
+            <div class="stat"><span>줄</span><strong id="lines">0</strong></div>
+            <div class="stat"><span>레벨</span><strong id="level">1</strong></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>다음 블록</h2>
+          <canvas id="next" width="120" height="120" aria-label="다음 블록"></canvas>
+        </div>
+
+        <div class="panel">
+          <h2>조작</h2>
+          <div class="buttons">
+            <button id="startBtn" type="button">시작 / 재시작</button>
+            <button id="pauseBtn" type="button" class="secondary">일시정지</button>
+          </div>
+          <ul class="help">
+            <li>이동: ← →</li>
+            <li>회전: ↑</li>
+            <li>빠른 낙하: ↓</li>
+            <li>즉시 내리기: Space</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
