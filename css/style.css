@@ -310,14 +310,14 @@ body {
 .compare-visual {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 120px 1fr;
+  grid-template-columns: 1fr 84px 1fr;
   gap: 0;
   width: min(100%, 770px);
   margin: 0 auto;
   min-height: 392px;
-  padding: 28px 20px;
+  padding: 20px 14px;
   overflow: hidden;
-  border-radius: 32px;
+  border-radius: 22px;
   background:
     radial-gradient(circle at 15% 20%, rgba(95, 214, 183, 0.18), transparent 28%),
     radial-gradient(circle at 82% 22%, rgba(90, 150, 255, 0.16), transparent 26%),
@@ -348,27 +348,27 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 22px;
+  gap: 15px;
   width: 100%;
-  padding: 28px 14px;
+  padding: 20px 10px;
 }
 
 .compare-side-heading {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 18px 8px;
-  font-size: 1.05rem;
+  gap: 7px;
+  padding: 0 13px 6px;
+  font-size: 0.82rem;
   color: var(--text);
 }
 
 .compare-side-heading strong {
-  font-size: 1.15rem;
+  font-size: 0.95rem;
   font-weight: 900;
 }
 
 .compare-emoji {
-  font-size: 1.75rem;
+  font-size: 1.2rem;
   line-height: 1;
 }
 
@@ -378,8 +378,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: min(15vw, 210px);
-  font-size: clamp(11rem, 17vw, 16rem);
+  width: min(10.5vw, 147px);
+  font-size: clamp(7.7rem, 11.9vw, 11.2rem);
   font-weight: 900;
   line-height: 0.78;
   letter-spacing: -0.08em;
@@ -407,10 +407,10 @@ body {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 170px 1fr;
-  gap: 18px;
+  grid-template-columns: 119px 1fr;
+  gap: 12px;
   align-items: center;
-  padding: 12px 18px;
+  padding: 8px 13px;
   border-top: 1px solid rgba(93, 130, 170, 0.22);
 }
 
@@ -419,7 +419,7 @@ body {
 }
 
 .compare-item-label {
-  font-size: 0.98rem;
+  font-size: 0.82rem;
   font-weight: 900;
   color: var(--text);
 }
@@ -433,11 +433,12 @@ body {
 }
 
 .compare-item-body strong {
-  font-size: 1.02rem;
+  font-size: 0.86rem;
   font-weight: 900;
 }
 
 .compare-item-body span {
+  font-size: 0.78rem;
   color: var(--text-secondary);
 }
 
@@ -447,7 +448,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(2.8rem, 4.6vw, 4.4rem);
+  font-size: clamp(2rem, 3.2vw, 3.1rem);
   font-weight: 900;
   font-style: italic;
   color: transparent;
