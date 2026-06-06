@@ -369,34 +369,47 @@
           sortable: true,
           resizable: true,
           uniformWidth: 220,
-          layoutVersion: 'program-builder-v4',
+          layoutVersion: 'program-builder-v5',
           prompts: [
             {
               uid: 'prompts-0',
-              label: '프롬프트 1',
+              label: '테트리스 만들기',
               width: 220,
               tool: 'cursor',
               editable: true,
               text: '테트리스 폴더 만들어\n웹 기반 테트리스 게임 만들어',
-              notePad: true
+              notePad: true,
+              note: '블럭을 3D로 표시해'
             },
             {
               uid: 'prompts-1',
-              label: '프롬프트 2',
+              label: '벽돌깨비 만들기',
               width: 220,
               tool: 'cursor',
               editable: true,
-              text: '벽돌깨비 폴더 만들어\n파이썬 코드로 별돌깨기 게임 만들어',
-              notePad: true
+              text: '벽돌깨비 폴더 만들어\n파이썬 코드로 벽돌깨기 게임 만들어',
+              notePad: true,
+              note: '총알 나가게 해줘'
             },
             {
               uid: 'prompts-2',
-              label: '프롬프트 3',
+              label: '프로그램 만들어 보기',
               width: 220,
               tool: 'cursor',
               editable: true,
               text: '엑셀 파일을 업로드 해서 대시보드와 지도위에 현황을 표시하는 프로그램 만들고 싶어\n탭 구성은 자료, 대시보드, 지도로 구성해\n자료탭은\n파일 선택해서 엑셀을 업로드 할 수 있게 하고 컬럼 정보는 자동으로 읽어오게 해.. 좌표계산 버튼을 만들어서 주소 값의 좌표를 계산해서 위경도 컬럼으로 표시해\n구 구분 컬럼을 만들고 주소에서 구를 추출해서 표시해\n대시보드 탭은\n엑셀의 컬럼을 보고 너가 알아서 판단해\n지도 탭은\n자료에서 생성된 좌표 값을 기준으로 이용자의 현황을 표시하도록 해\n남성, 여성, 장애 유형을 체크박스로 선택할 수 있게 하고 선택한 데이터만 지도에 표시되게 해',
-              notePad: true
+              notePad: true,
+              note: '위의 내용은 생각나는대로 막 작성해본것임..\nai에게 프롬프트 정리해달라고 요청해 본다..\n필요하면 심층분석을 해본다.\n\n최종 원하는 결과가 나오면 ai에게 일을 시킨다'
+            },
+            {
+              uid: 'prompts-3',
+              label: '대시보드 프롬프트 생성해보기',
+              width: 220,
+              tool: 'cursor',
+              editable: true,
+              text: '이 파일의 키워드를 분석하고 주요 키워드로 대시보드용 프롬프트 생성해',
+              notePad: true,
+              note: '이용현황.xlsx를 기준으로 주요 텍스트 컬럼(장애구분, 복지관명, 이용프로그램, 등록상태, 담당복지사, 구) 중심으로 키워드를 정리해봅니다.'
             }
           ]
         }

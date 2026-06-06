@@ -310,7 +310,7 @@
       ${prompt.notePad ? `
       <div class="prompt-note-box">
         <label class="prompt-note-label" for="note-${id}">메모</label>
-        <textarea class="prompt-note" id="note-${id}" data-note-id="${id}" placeholder="여기에 메모를 적으세요.">${escapeHtml(getStoredPromptNote(id))}</textarea>
+        <textarea class="prompt-note" id="note-${id}" data-note-id="${id}" placeholder="여기에 메모를 적으세요.">${escapeHtml(getStoredPromptNote(id, prompt.note || ''))}</textarea>
       </div>` : ''}
       ${directEdit && options.resizable ? `<div class="prompt-resize-handle" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" title="드래그해서 너비 조절"></div>` : ''}
     </div>`;
@@ -332,11 +332,11 @@
     return `prompt-note:${id}`;
   }
 
-  function getStoredPromptNote(id) {
+  function getStoredPromptNote(id, fallback = '') {
     try {
-      return localStorage.getItem(getPromptNoteStorageKey(id)) || '';
+      return localStorage.getItem(getPromptNoteStorageKey(id)) || fallback;
     } catch {
-      return '';
+      return fallback;
     }
   }
 
@@ -373,7 +373,8 @@
         tool: prompt.tool || 'cursor',
         editable: true,
         text: prompt.text || '',
-        notePad: prompt.notePad !== false
+        notePad: prompt.notePad !== false,
+        note: prompt.note || ''
       }));
     }
 
@@ -384,7 +385,8 @@
       tool: prompt.tool || fallbackByUid.get(prompt.uid || `prompts-${index}`)?.tool || 'cursor',
       editable: true,
       text: prompt.text || fallbackByUid.get(prompt.uid || `prompts-${index}`)?.text || '',
-      notePad: prompt.notePad !== false
+      notePad: prompt.notePad !== false,
+      note: prompt.note || fallbackByUid.get(prompt.uid || `prompts-${index}`)?.note || ''
     }));
 
     try {
@@ -398,8 +400,26 @@
             tool: prompt.tool || 'cursor',
             editable: true,
             text: prompt.text || '',
-            notePad: prompt.notePad !== false
+            notePad: prompt.notePad !== false,
+            note: prompt.note || ''
           }));
+        } else {
+          const normalizedByUid = new Set(normalized.map(prompt => prompt.uid));
+          fallbackPrompts.forEach((prompt, index) => {
+            const uid = prompt.uid || `prompts-${index}`;
+            if (!normalizedByUid.has(uid)) {
+              normalized.push({
+                uid,
+                label: prompt.label || `프롬프트 ${normalized.length + 1}`,
+                width: prompt.width || uniformWidth,
+                tool: prompt.tool || 'cursor',
+                editable: true,
+                text: prompt.text || '',
+                notePad: prompt.notePad !== false,
+                note: prompt.note || ''
+              });
+            }
+          });
         }
         localStorage.setItem(getProgramBuilderPromptListStorageKey(scopeId), JSON.stringify(normalized));
         localStorage.setItem(getProgramBuilderPromptListVersionKey(scopeId), layoutVersion);
