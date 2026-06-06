@@ -466,11 +466,24 @@
       const haltHeaderEvents = event => {
         event.stopPropagation();
       };
+      const header = input.closest('.prompt-card-header');
+      const restoreDrag = () => {
+        if (header?.dataset.expandable === 'true') {
+          header.draggable = true;
+        }
+      };
 
       input.addEventListener('click', haltHeaderEvents);
-      input.addEventListener('mousedown', haltHeaderEvents);
+      input.addEventListener('mousedown', event => {
+        if (header) {
+          header.draggable = false;
+        }
+        haltHeaderEvents(event);
+      });
       input.addEventListener('dblclick', haltHeaderEvents);
       input.addEventListener('dragstart', haltHeaderEvents);
+      input.addEventListener('mouseup', restoreDrag);
+      input.addEventListener('blur', restoreDrag);
       input.addEventListener('input', () => {
         updateDirectEditPrompt(input.dataset.scopeId, input.dataset.promptUid, { label: input.value || '제목 없음' });
       });
