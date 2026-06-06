@@ -352,6 +352,9 @@
     const fallbackPrompts = section.prompts;
     const uniformWidth = section.uniformWidth || 220;
     const layoutVersion = section.layoutVersion || '';
+    const fallbackByUid = new Map(
+      fallbackPrompts.map((prompt, index) => [prompt.uid || `prompts-${index}`, prompt])
+    );
     let prompts = null;
     try {
       const stored = localStorage.getItem(getProgramBuilderPromptListStorageKey(scopeId));
@@ -376,26 +379,28 @@
 
     let normalized = prompts.map((prompt, index) => ({
       uid: prompt.uid || `prompts-${index}`,
-      label: prompt.label || `프롬프트 ${index + 1}`,
-      width: prompt.width || uniformWidth,
-      tool: prompt.tool || 'cursor',
+      label: prompt.label || fallbackByUid.get(prompt.uid || `prompts-${index}`)?.label || `프롬프트 ${index + 1}`,
+      width: prompt.width || fallbackByUid.get(prompt.uid || `prompts-${index}`)?.width || uniformWidth,
+      tool: prompt.tool || fallbackByUid.get(prompt.uid || `prompts-${index}`)?.tool || 'cursor',
       editable: true,
-      text: prompt.text || '',
+      text: prompt.text || fallbackByUid.get(prompt.uid || `prompts-${index}`)?.text || '',
       notePad: prompt.notePad !== false
     }));
 
     try {
       const storedVersion = localStorage.getItem(getProgramBuilderPromptListVersionKey(scopeId));
       if (layoutVersion && storedVersion !== layoutVersion) {
-        normalized = fallbackPrompts.map((prompt, index) => ({
-          uid: prompt.uid || `prompts-${index}`,
-          label: prompt.label || `프롬프트 ${index + 1}`,
-          width: prompt.width || uniformWidth,
-          tool: prompt.tool || 'cursor',
-          editable: true,
-          text: prompt.text || '',
-          notePad: prompt.notePad !== false
-        }));
+        if (!prompts || !prompts.length) {
+          normalized = fallbackPrompts.map((prompt, index) => ({
+            uid: prompt.uid || `prompts-${index}`,
+            label: prompt.label || `프롬프트 ${index + 1}`,
+            width: prompt.width || uniformWidth,
+            tool: prompt.tool || 'cursor',
+            editable: true,
+            text: prompt.text || '',
+            notePad: prompt.notePad !== false
+          }));
+        }
         localStorage.setItem(getProgramBuilderPromptListStorageKey(scopeId), JSON.stringify(normalized));
         localStorage.setItem(getProgramBuilderPromptListVersionKey(scopeId), layoutVersion);
       }
