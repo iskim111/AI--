@@ -238,6 +238,7 @@
 
   function renderNoteSection(section) {
     return `<div class="section">
+      ${section.title ? sectionTitle(section, section.icon) : ''}
       <div class="tip-box">${section.text}</div>
     </div>`;
   }
@@ -251,17 +252,24 @@
   }
 
   function renderPromptsSection(section, scopeId) {
+    const prompts = section.directEdit ? getProgramBuilderPromptList(scopeId, section) : section.prompts;
     return `<div class="section">
-      ${section.title ? sectionTitle(section, section.icon) : ''}
+      ${(section.title || section.addable) ? `
+      <div class="prompt-section-bar">
+        ${section.title ? sectionTitle(section, section.icon) : '<div></div>'}
+        ${section.addable ? `<button class="btn btn-outline btn-sm prompt-add-btn" data-scope-id="${scopeId}" type="button">+ 프롬프트 추가</button>` : ''}
+      </div>` : ''}
       ${section.hint ? `<div class="prompt-copy-hint">☞ 프롬프트 복사해서 Codex 채팅창에 붙여넣기</div>` : ''}
       <div class="prompt-list${section.className ? ` ${section.className}` : ''}">
-        ${section.prompts.map((p, i) => renderPromptCard(p, `${scopeId || 'section'}-${section.title || 'prompts'}-${i}`)).join('')}
+        ${prompts.map((p, i) => renderPromptCard(p, getPromptDomId(scopeId, p, i), { directEdit: !!section.directEdit, scopeId, prompt: p })).join('')}
       </div>
     </div>`;
   }
 
-  function renderPromptCard(prompt, id) {
+  function renderPromptCard(prompt, id, options = {}) {
     const toolLabel = { gemini: 'Gemini', cursor: 'Cursor', both: 'Cursor + Gemini', vba: 'VBA Prompt' };
+    const directEdit = !!options.directEdit;
+    const cardWidth = directEdit && prompt.width ? ` style="width:${prompt.width}px"` : '';
     const editableActions = prompt.editable ? `
       <div class="prompt-header-actions">
         <button class="btn btn-ghost btn-sm prompt-edit-btn" data-prompt-id="${id}" type="button">편집</button>
@@ -269,16 +277,25 @@
         <button class="btn btn-ghost btn-sm prompt-cancel-btn hidden" data-prompt-id="${id}" type="button">취소</button>
       </div>
     ` : '';
-    return `<div class="prompt-card">
-      <div class="prompt-card-header">
+    const directActions = directEdit ? `
+      <div class="prompt-header-actions">
+        <button class="btn btn-ghost btn-sm prompt-delete-btn" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" type="button">삭제</button>
+        <button class="btn btn-ghost btn-sm prompt-collapse-btn hidden" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" type="button">축소</button>
+      </div>
+    ` : '';
+    return `<div class="prompt-card${directEdit ? ' prompt-card--resizable' : ''}"${cardWidth} data-scope-id="${options.scopeId || ''}" data-prompt-uid="${prompt.uid || ''}">
+      <div class="prompt-card-header"${directEdit ? ` data-expandable="true" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" draggable="true"` : ''}>
         <span class="prompt-label">${prompt.label}</span>
-        ${prompt.editable ? editableActions : (prompt.tool ? `<span class="prompt-tool ${prompt.tool}">${toolLabel[prompt.tool] || prompt.tool}</span>` : '')}
+        ${directEdit ? directActions : (prompt.editable ? editableActions : (prompt.tool ? `<span class="prompt-tool ${prompt.tool}">${toolLabel[prompt.tool] || prompt.tool}</span>` : ''))}
       </div>
       ${prompt.fileRef ? `<div class="prompt-file-ref">업로드 파일: <code>${prompt.fileRef}</code></div>` : ''}
       <div class="prompt-body-row">
-        <div class="prompt-body" id="prompt-${id}" data-original-text="${escapeHtml(prompt.text)}">${formatPromptText(getStoredPromptText(id, prompt.text))}</div>
-        ${prompt.editable ? `<textarea class="prompt-editor hidden" id="editor-${id}">${escapeHtml(getStoredPromptText(id, prompt.text))}</textarea>` : ''}
-        <button class="btn btn-primary btn-sm copy-btn" data-copy="prompt-${id}" type="button">
+        ${directEdit
+          ? `<textarea class="prompt-editor prompt-live-editor" id="prompt-input-${id}" data-prompt-id="${id}" placeholder="여기에 프롬프트를 바로 작성하세요.">${escapeHtml(getStoredPromptText(id, prompt.text))}</textarea>`
+          : `<div class="prompt-body" id="prompt-${id}" data-original-text="${escapeHtml(prompt.text)}">${formatPromptText(getStoredPromptText(id, prompt.text))}</div>
+        ${prompt.editable ? `<textarea class="prompt-editor hidden" id="editor-${id}">${escapeHtml(getStoredPromptText(id, prompt.text))}</textarea>` : ''}`
+        }
+        <button class="btn btn-primary btn-sm copy-btn" ${directEdit ? `data-copy-input="prompt-input-${id}"` : `data-copy="prompt-${id}"`} type="button">
           <span class="material-icons-round">content_copy</span>프롬프트 복사
         </button>
       </div>
@@ -287,6 +304,7 @@
         <label class="prompt-note-label" for="note-${id}">메모</label>
         <textarea class="prompt-note" id="note-${id}" data-note-id="${id}" placeholder="여기에 메모를 적으세요.">${escapeHtml(getStoredPromptNote(id))}</textarea>
       </div>` : ''}
+      ${directEdit ? `<div class="prompt-resize-handle" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" title="드래그해서 너비 조절"></div>` : ''}
     </div>`;
   }
 
@@ -314,6 +332,90 @@
     }
   }
 
+  function getProgramBuilderPromptListStorageKey(scopeId) {
+    return `prompt-list:${scopeId}`;
+  }
+
+  function getProgramBuilderPromptListVersionKey(scopeId) {
+    return `prompt-list-version:${scopeId}`;
+  }
+
+  function getProgramBuilderPromptList(scopeId, section) {
+    const fallbackPrompts = section.prompts;
+    const uniformWidth = section.uniformWidth || 220;
+    const layoutVersion = section.layoutVersion || '';
+    let prompts = null;
+    try {
+      const stored = localStorage.getItem(getProgramBuilderPromptListStorageKey(scopeId));
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length) {
+          prompts = parsed;
+        }
+      }
+    } catch {}
+    if (!prompts) {
+      prompts = fallbackPrompts.map((prompt, index) => ({
+        uid: prompt.uid || `prompts-${index}`,
+        label: prompt.label || `프롬프트 ${index + 1}`,
+        width: prompt.width || uniformWidth,
+        tool: prompt.tool || 'cursor',
+        editable: true,
+        text: prompt.text || '',
+        notePad: prompt.notePad !== false
+      }));
+    }
+
+    let normalized = prompts.map((prompt, index) => ({
+      uid: prompt.uid || `prompts-${index}`,
+      label: prompt.label || `프롬프트 ${index + 1}`,
+      width: prompt.width || uniformWidth,
+      tool: prompt.tool || 'cursor',
+      editable: true,
+      text: prompt.text || '',
+      notePad: prompt.notePad !== false
+    }));
+
+    try {
+      const storedVersion = localStorage.getItem(getProgramBuilderPromptListVersionKey(scopeId));
+      if (layoutVersion && storedVersion !== layoutVersion) {
+        normalized = fallbackPrompts.map((prompt, index) => ({
+          uid: prompt.uid || `prompts-${index}`,
+          label: prompt.label || `프롬프트 ${index + 1}`,
+          width: prompt.width || uniformWidth,
+          tool: prompt.tool || 'cursor',
+          editable: true,
+          text: prompt.text || '',
+          notePad: prompt.notePad !== false
+        }));
+        localStorage.setItem(getProgramBuilderPromptListStorageKey(scopeId), JSON.stringify(normalized));
+        localStorage.setItem(getProgramBuilderPromptListVersionKey(scopeId), layoutVersion);
+      }
+    } catch {}
+
+    return normalized;
+  }
+
+  function saveProgramBuilderPromptList(scopeId, prompts) {
+    try {
+      localStorage.setItem(getProgramBuilderPromptListStorageKey(scopeId), JSON.stringify(prompts));
+    } catch {}
+  }
+
+  function getPromptDomId(scopeId, prompt, index) {
+    return `${scopeId || 'section'}-${prompt.uid || `prompts-${index}`}`;
+  }
+
+  function getSectionByScopeId(scopeId) {
+    const lastHyphen = scopeId.lastIndexOf('-');
+    if (lastHyphen < 0) return null;
+    const tabId = scopeId.slice(0, lastHyphen);
+    const sectionIndex = Number(scopeId.slice(lastHyphen + 1));
+    const tab = tabs.find(item => item.id === tabId);
+    if (!tab || !Number.isInteger(sectionIndex)) return null;
+    return tab.sections[sectionIndex] || null;
+  }
+
   function bindPromptEditors() {
     document.querySelectorAll('.prompt-edit-btn').forEach(btn => {
       btn.addEventListener('click', () => togglePromptEditor(btn.dataset.promptId, true));
@@ -334,6 +436,246 @@
         } catch {}
       });
     });
+
+    document.querySelectorAll('.prompt-live-editor').forEach(editor => {
+      editor.addEventListener('input', () => {
+        try {
+          localStorage.setItem(getPromptStorageKey(editor.dataset.promptId), editor.value);
+        } catch {}
+      });
+    });
+
+    document.querySelectorAll('.prompt-add-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        addProgramBuilderPrompt(btn.dataset.scopeId);
+      });
+    });
+
+    document.querySelectorAll('.prompt-delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        deleteProgramBuilderPrompt(btn.dataset.scopeId, btn.dataset.promptUid);
+      });
+    });
+
+    document.querySelectorAll('.prompt-collapse-btn').forEach(btn => {
+      btn.addEventListener('click', event => {
+        event.stopPropagation();
+        collapseProgramBuilderPrompt(btn.dataset.scopeId);
+      });
+    });
+
+    document.querySelectorAll('.prompt-card-header[data-expandable="true"]').forEach(header => {
+      header.addEventListener('dblclick', () => {
+        expandProgramBuilderPrompt(header.dataset.scopeId, header.dataset.promptUid);
+      });
+    });
+
+    bindProgramBuilderResize();
+    bindProgramBuilderDragAndDrop();
+  }
+
+  function addProgramBuilderPrompt(scopeId) {
+    const section = getSectionByScopeId(scopeId);
+    if (!section) return;
+
+    const prompts = getProgramBuilderPromptList(scopeId, section);
+    const nextIndex = prompts.reduce((max, prompt) => {
+      const match = String(prompt.uid || '').match(/prompts-(\d+)$/);
+      return match ? Math.max(max, Number(match[1])) : max;
+    }, -1) + 1;
+
+    prompts.push({
+      uid: `prompts-${nextIndex}`,
+      label: `프롬프트 ${prompts.length + 1}`,
+      width: section.uniformWidth || 220,
+      tool: 'cursor',
+      editable: true,
+      text: '',
+      notePad: true
+    });
+
+    saveProgramBuilderPromptList(scopeId, prompts);
+    renderPanels();
+
+    const newId = getPromptDomId(scopeId, prompts[prompts.length - 1], prompts.length - 1);
+    const input = document.getElementById(`prompt-input-${newId}`);
+    if (input) {
+      input.focus();
+    }
+  }
+
+  function deleteProgramBuilderPrompt(scopeId, promptUid) {
+    const section = getSectionByScopeId(scopeId);
+    if (!section) return;
+
+    const prompts = getProgramBuilderPromptList(scopeId, section);
+    if (prompts.length <= 1) return;
+
+    const nextPrompts = prompts.filter(prompt => prompt.uid !== promptUid).map((prompt, index) => ({
+      ...prompt,
+      label: `프롬프트 ${index + 1}`
+    }));
+
+    prompts.forEach((prompt, index) => {
+      if (prompt.uid === promptUid) {
+        const promptId = getPromptDomId(scopeId, prompt, index);
+        try {
+          localStorage.removeItem(getPromptStorageKey(promptId));
+          localStorage.removeItem(getPromptNoteStorageKey(promptId));
+        } catch {}
+      }
+    });
+
+    saveProgramBuilderPromptList(scopeId, nextPrompts);
+    renderPanels();
+  }
+
+  function bindProgramBuilderResize() {
+    document.querySelectorAll('.prompt-resize-handle').forEach(handle => {
+      handle.addEventListener('mousedown', event => {
+        event.preventDefault();
+        const card = handle.closest('.prompt-card');
+        if (!card) return;
+
+        const startX = event.clientX;
+        const startWidth = card.getBoundingClientRect().width;
+        const scopeId = handle.dataset.scopeId;
+        const promptUid = handle.dataset.promptUid;
+
+        const onMove = moveEvent => {
+          const nextWidth = Math.max(260, Math.min(1100, startWidth + (moveEvent.clientX - startX)));
+          card.style.width = `${nextWidth}px`;
+        };
+
+        const onUp = () => {
+          window.removeEventListener('mousemove', onMove);
+          window.removeEventListener('mouseup', onUp);
+          saveProgramBuilderPromptWidth(scopeId, promptUid, Math.round(card.getBoundingClientRect().width));
+        };
+
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+      });
+    });
+  }
+
+  function saveProgramBuilderPromptWidth(scopeId, promptUid, width) {
+    const section = getSectionByScopeId(scopeId);
+    if (!section) return;
+    const prompts = getProgramBuilderPromptList(scopeId, section).map(prompt =>
+      prompt.uid === promptUid ? { ...prompt, width } : prompt
+    );
+    saveProgramBuilderPromptList(scopeId, prompts);
+  }
+
+  function bindProgramBuilderDragAndDrop() {
+    document.querySelectorAll('.prompt-card-header[data-expandable="true"]').forEach(header => {
+      header.addEventListener('dragstart', event => {
+        const card = header.closest('.prompt-card');
+        if (!card) return;
+        card.classList.add('prompt-card--dragging');
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', JSON.stringify({
+          scopeId: header.dataset.scopeId,
+          promptUid: header.dataset.promptUid
+        }));
+      });
+
+      header.addEventListener('dragend', () => {
+        const card = header.closest('.prompt-card');
+        if (card) {
+          card.classList.remove('prompt-card--dragging');
+        }
+        document.querySelectorAll('.prompt-card--drag-over').forEach(el => el.classList.remove('prompt-card--drag-over'));
+      });
+    });
+
+    document.querySelectorAll('.prompt-card[data-scope-id]').forEach(card => {
+      card.addEventListener('dragend', () => {
+        card.classList.remove('prompt-card--dragging');
+        document.querySelectorAll('.prompt-card--drag-over').forEach(el => el.classList.remove('prompt-card--drag-over'));
+      });
+
+      card.addEventListener('dragover', event => {
+        if (!card.dataset.scopeId) return;
+        event.preventDefault();
+        card.classList.add('prompt-card--drag-over');
+      });
+
+      card.addEventListener('dragleave', () => {
+        card.classList.remove('prompt-card--drag-over');
+      });
+
+      card.addEventListener('drop', event => {
+        event.preventDefault();
+        card.classList.remove('prompt-card--drag-over');
+        let payload;
+        try {
+          payload = JSON.parse(event.dataTransfer.getData('text/plain'));
+        } catch {
+          return;
+        }
+        if (!payload || payload.scopeId !== card.dataset.scopeId || payload.promptUid === card.dataset.promptUid) {
+          return;
+        }
+        moveProgramBuilderPrompt(payload.scopeId, payload.promptUid, card.dataset.promptUid);
+      });
+    });
+  }
+
+  function moveProgramBuilderPrompt(scopeId, sourceUid, targetUid) {
+    const section = getSectionByScopeId(scopeId);
+    if (!section) return;
+
+    const prompts = getProgramBuilderPromptList(scopeId, section);
+    const sourceIndex = prompts.findIndex(prompt => prompt.uid === sourceUid);
+    const targetIndex = prompts.findIndex(prompt => prompt.uid === targetUid);
+    if (sourceIndex < 0 || targetIndex < 0 || sourceIndex === targetIndex) return;
+
+    const nextPrompts = [...prompts];
+    const [moved] = nextPrompts.splice(sourceIndex, 1);
+    nextPrompts.splice(targetIndex, 0, moved);
+
+    saveProgramBuilderPromptList(scopeId, nextPrompts.map((prompt, index) => ({
+      ...prompt,
+      label: `프롬프트 ${index + 1}`
+    })));
+    renderPanels();
+  }
+
+  function expandProgramBuilderPrompt(scopeId, promptUid) {
+    const cards = document.querySelectorAll(`.prompt-card[data-scope-id="${scopeId}"]`);
+    if (!cards.length) return;
+    const list = cards[0].closest('.prompt-list');
+    cards.forEach(card => {
+      const isTarget = card.dataset.promptUid === promptUid;
+      card.classList.toggle('prompt-card--expanded', isTarget);
+      card.classList.toggle('hidden', !isTarget);
+      const collapseBtn = card.querySelector('.prompt-collapse-btn');
+      const deleteBtn = card.querySelector('.prompt-delete-btn');
+      if (collapseBtn) collapseBtn.classList.toggle('hidden', !isTarget);
+      if (deleteBtn) deleteBtn.classList.toggle('hidden', isTarget);
+    });
+    if (list) {
+      list.classList.add('prompt-list--single');
+    }
+  }
+
+  function collapseProgramBuilderPrompt(scopeId) {
+    const cards = document.querySelectorAll(`.prompt-card[data-scope-id="${scopeId}"]`);
+    if (!cards.length) return;
+    const list = cards[0].closest('.prompt-list');
+    cards.forEach(card => {
+      card.classList.remove('prompt-card--expanded');
+      card.classList.remove('hidden');
+      const collapseBtn = card.querySelector('.prompt-collapse-btn');
+      const deleteBtn = card.querySelector('.prompt-delete-btn');
+      if (collapseBtn) collapseBtn.classList.add('hidden');
+      if (deleteBtn) deleteBtn.classList.remove('hidden');
+    });
+    if (list) {
+      list.classList.remove('prompt-list--single');
+    }
   }
 
   function bindExcelUpload() {
@@ -634,6 +976,9 @@
         if (btn.dataset.copy) {
           const el = document.getElementById(btn.dataset.copy);
           text = el ? el.textContent : '';
+        } else if (btn.dataset.copyInput) {
+          const input = document.getElementById(btn.dataset.copyInput);
+          text = input ? input.value : '';
         } else if (btn.dataset.copyText) {
           text = decodeURIComponent(btn.dataset.copyText);
         }

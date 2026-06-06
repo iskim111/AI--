@@ -286,34 +286,99 @@
     {
       id: 'distribution',
       label: '프로그램 만들기',
-      title: '프로그램 만들기',
+      title: '',
       description: '',
       sections: [
         {
+          type: 'note',
+          title: '프로그램 구분',
+          icon: 'view_list',
+          text: `
+            <div class="compare-guide">
+              <h3 class="compare-guide-title">파이썬(RPA) vs 웹 프로그래밍 주요 목적 비교</h3>
+              <div class="compare-visual">
+                <div class="compare-side compare-side--python">
+                  <div class="compare-letter">P</div>
+                  <div class="compare-side-inner">
+                    <div class="compare-side-heading">
+                      <span class="compare-emoji">🐍</span>
+                      <strong>파이썬 → 업무 자동화(RPA)</strong>
+                    </div>
+                    <div class="compare-item">
+                      <div class="compare-item-label">핵심 목표</div>
+                      <div class="compare-item-body"><strong>생산성 향상</strong><span>귀찮고 반복되는 일 줄이기</span></div>
+                    </div>
+                    <div class="compare-item">
+                      <div class="compare-item-label">주요 대상</div>
+                      <div class="compare-item-body"><strong>나 또는 우리 회사 직원</strong><span>내부용</span></div>
+                    </div>
+                    <div class="compare-item">
+                      <div class="compare-item-label">작동 위치</div>
+                      <div class="compare-item-body"><strong>내 컴퓨터, 회사 내부 서버</strong><span>개별 업무 환경 중심</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="compare-vs" aria-hidden="true">VS</div>
+                <div class="compare-side compare-side--web">
+                  <div class="compare-letter">W</div>
+                  <div class="compare-side-inner">
+                    <div class="compare-side-heading">
+                      <span class="compare-emoji">🌐</span>
+                      <strong>웹 프로그래밍 → 서비스 플랫폼</strong>
+                    </div>
+                    <div class="compare-item">
+                      <div class="compare-item-label">핵심 목표</div>
+                      <div class="compare-item-body"><strong>비즈니스 구축</strong><span>사람들이 모여 활동할 공간 만들기</span></div>
+                    </div>
+                    <div class="compare-item">
+                      <div class="compare-item-label">주요 대상</div>
+                      <div class="compare-item-body"><strong>인터넷을 쓰는 모든 대중</strong><span>외부 고객용</span></div>
+                    </div>
+                    <div class="compare-item">
+                      <div class="compare-item-label">작동 위치</div>
+                      <div class="compare-item-body"><strong>크롬, 사파리 같은 웹 브라우저 전체</strong><span>공개 서비스 환경 중심</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `
+        },
+        {
           type: 'prompts',
-          title: '',
+          title: '프롬프트',
           icon: 'edit_note',
           className: 'prompt-list--program-builder',
+          directEdit: true,
+          addable: true,
+          uniformWidth: 220,
+          layoutVersion: 'program-builder-v3',
           prompts: [
             {
+              uid: 'prompts-0',
               label: '프롬프트 1',
+              width: 220,
               tool: 'cursor',
               editable: true,
-              text: '',
+              text: '테트리스 폴더 만들어\n웹 기반 테트리스 게임 만들어',
               notePad: true
             },
             {
+              uid: 'prompts-1',
               label: '프롬프트 2',
+              width: 220,
               tool: 'cursor',
               editable: true,
-              text: '',
+              text: '벽돌깨비 폴더 만들어\n파이썬 코드로 별돌깨기 게임 만들어',
               notePad: true
             },
             {
+              uid: 'prompts-2',
               label: '프롬프트 3',
+              width: 220,
               tool: 'cursor',
               editable: true,
-              text: '',
+              text: '엑셀 파일을 업로드 해서 대시보드와 지도위에 현황을 표시하는 프로그램 만들고 싶어\n탭 구성은 자료, 대시보드, 지도로 구성해\n자료탭은\n파일 선택해서 엑셀을 업로드 할 수 있게 하고 컬럼 정보는 자동으로 읽어오게 해.. 좌표계산 버튼을 만들어서 주소 값의 좌표를 계산해서 위경도 컬럼으로 표시해\n구 구분 컬럼을 만들고 주소에서 구를 추출해서 표시해\n대시보드 탭은\n엑셀의 컬럼을 보고 너가 알아서 판단해\n지도 탭은\n자료에서 생성된 좌표 값을 기준으로 이용자의 현황을 표시하도록 해\n남성, 여성, 장애 유형을 체크박스로 선택할 수 있게 하고 선택한 데이터만 지도에 표시되게 해',
               notePad: true
             }
           ]
@@ -417,6 +482,28 @@
             { label: 'Gemini API 요약 유틸', tool: 'cursor', text: 'Gemini API를 호출해서 홈앤서비스 접수 현황 요약 문안을 생성하는 Python 코드를 만들어줘.\n[전제]\n- GEMINI_API_KEY는 .env 파일에 저장\n- API Key를 코드에 직접 적거나 출력하지 않음\n- 입력: outputs/reports/home_service_summary.xlsx\n- 출력: outputs/reports/gemini_operation_summary.md\n[요청]\n1. python-dotenv로 .env 읽기\n2. API Key 없을 때 친절한 오류 메시지\n3. 팀장 보고용 5줄 요약과 후속 조치 3개 생성' },
             { label: 'SMTP 보고 메일 자동화', tool: 'cursor', text: 'SMTP를 사용해서 홈앤서비스 접수 현황 보고 메일을 발송하는 Python 코드를 만들어줘.\n[전제]\n- SMTP 정보는 .env의 SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD\n- 실제 발송 전 테스트 수신자에게만 발송\n- 첨부: home_service_report.pptx, home_service_report.docx\n- 본문: gemini_operation_summary.md\n[요청]\n1. .env에서 SMTP 정보 읽기\n2. 첨부파일 없을 때 발송하지 않고 오류 안내\n3. 발송 로그 outputs/logs/mail_send.log\n4. 비밀번호와 API Key가 로그에 남지 않도록 처리' }
           ]
+        }
+      ]
+    },
+    {
+      id: 'welfare-dashboard',
+      label: '이용현황 대시보드',
+      topic: 'Dashboard Demo',
+      title: '복지관 이용현황 대시보드',
+      description: '이용현황.xlsx의 주요 키워드와 분포를 바탕으로 만든 관리자용 대시보드 예시입니다.',
+      sections: [
+        {
+          type: 'note',
+          title: '데이터 기준',
+          icon: 'insights',
+          text: '총 10,000건의 이용자 데이터를 기준으로 상태, 장애구분, 프로그램, 복지관, 지역 분포를 요약했습니다. 최근 이용일 기준 최신 데이터는 2026-06-02입니다.'
+        },
+        {
+          type: 'embed',
+          title: '대시보드 화면',
+          icon: 'dashboard',
+          description: '상단 KPI, 분포 차트, 교차분석, 운영 인사이트를 한 화면에서 확인할 수 있습니다.',
+          src: 'dashboard/welfare-dashboard.html'
         }
       ]
     },
