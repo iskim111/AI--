@@ -312,7 +312,9 @@ body {
   display: grid;
   grid-template-columns: 1fr 120px 1fr;
   gap: 0;
-  min-height: 560px;
+  width: min(100%, 770px);
+  margin: 0 auto;
+  min-height: 392px;
   padding: 28px 20px;
   overflow: hidden;
   border-radius: 32px;
