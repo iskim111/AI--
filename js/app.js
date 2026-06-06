@@ -261,7 +261,13 @@
       </div>` : ''}
       ${section.hint ? `<div class="prompt-copy-hint">☞ 프롬프트 복사해서 Codex 채팅창에 붙여넣기</div>` : ''}
       <div class="prompt-list${section.className ? ` ${section.className}` : ''}">
-        ${prompts.map((p, i) => renderPromptCard(p, getPromptDomId(scopeId, p, i), { directEdit: !!section.directEdit, scopeId, prompt: p })).join('')}
+        ${prompts.map((p, i) => renderPromptCard(p, getPromptDomId(scopeId, p, i), {
+          directEdit: !!section.directEdit,
+          scopeId,
+          prompt: p,
+          resizable: !!section.resizable,
+          sortable: !!section.sortable
+        })).join('')}
       </div>
     </div>`;
   }
@@ -269,7 +275,7 @@
   function renderPromptCard(prompt, id, options = {}) {
     const toolLabel = { gemini: 'Gemini', cursor: 'Cursor', both: 'Cursor + Gemini', vba: 'VBA Prompt' };
     const directEdit = !!options.directEdit;
-    const cardWidth = directEdit && prompt.width ? ` style="width:${prompt.width}px"` : '';
+    const cardWidth = directEdit && options.resizable && prompt.width ? ` style="width:${prompt.width}px"` : '';
     const editableActions = prompt.editable ? `
       <div class="prompt-header-actions">
         <button class="btn btn-ghost btn-sm prompt-edit-btn" data-prompt-id="${id}" type="button">편집</button>
@@ -279,13 +285,15 @@
     ` : '';
     const directActions = directEdit ? `
       <div class="prompt-header-actions">
-        <button class="btn btn-ghost btn-sm prompt-delete-btn" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" type="button">삭제</button>
-        <button class="btn btn-ghost btn-sm prompt-collapse-btn hidden" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" type="button">축소</button>
+        ${options.sortable ? `<button class="btn btn-ghost btn-sm prompt-delete-btn" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" type="button">삭제</button>` : ''}
+        ${options.sortable ? `<button class="btn btn-ghost btn-sm prompt-collapse-btn hidden" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" type="button">축소</button>` : ''}
       </div>
     ` : '';
-    return `<div class="prompt-card${directEdit ? ' prompt-card--resizable' : ''}"${cardWidth} data-scope-id="${options.scopeId || ''}" data-prompt-uid="${prompt.uid || ''}">
-      <div class="prompt-card-header"${directEdit ? ` data-expandable="true" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" draggable="true"` : ''}>
-        <span class="prompt-label">${prompt.label}</span>
+    return `<div class="prompt-card${directEdit && options.resizable ? ' prompt-card--resizable' : ''}${directEdit ? ' prompt-card--direct-edit' : ''}"${cardWidth} data-scope-id="${options.scopeId || ''}" data-prompt-uid="${prompt.uid || ''}">
+      <div class="prompt-card-header"${directEdit ? ` data-expandable="${options.sortable ? 'true' : 'false'}" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}"${options.sortable ? ' draggable="true"' : ''}` : ''}>
+        ${directEdit
+          ? `<input class="prompt-title-input" type="text" value="${escapeHtml(prompt.label)}" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" aria-label="프롬프트 제목">`
+          : `<span class="prompt-label">${prompt.label}</span>`}
         ${directEdit ? directActions : (prompt.editable ? editableActions : (prompt.tool ? `<span class="prompt-tool ${prompt.tool}">${toolLabel[prompt.tool] || prompt.tool}</span>` : ''))}
       </div>
       ${prompt.fileRef ? `<div class="prompt-file-ref">업로드 파일: <code>${prompt.fileRef}</code></div>` : ''}
@@ -304,7 +312,7 @@
         <label class="prompt-note-label" for="note-${id}">메모</label>
         <textarea class="prompt-note" id="note-${id}" data-note-id="${id}" placeholder="여기에 메모를 적으세요.">${escapeHtml(getStoredPromptNote(id))}</textarea>
       </div>` : ''}
-      ${directEdit ? `<div class="prompt-resize-handle" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" title="드래그해서 너비 조절"></div>` : ''}
+      ${directEdit && options.resizable ? `<div class="prompt-resize-handle" data-scope-id="${options.scopeId}" data-prompt-uid="${prompt.uid}" title="드래그해서 너비 조절"></div>` : ''}
     </div>`;
   }
 
@@ -442,6 +450,24 @@
         try {
           localStorage.setItem(getPromptStorageKey(editor.dataset.promptId), editor.value);
         } catch {}
+        const card = editor.closest('.prompt-card');
+        if (card?.dataset.scopeId && card?.dataset.promptUid) {
+          updateDirectEditPrompt(card.dataset.scopeId, card.dataset.promptUid, { text: editor.value });
+        }
+      });
+    });
+
+    document.querySelectorAll('.prompt-title-input').forEach(input => {
+      const haltHeaderEvents = event => {
+        event.stopPropagation();
+      };
+
+      input.addEventListener('click', haltHeaderEvents);
+      input.addEventListener('mousedown', haltHeaderEvents);
+      input.addEventListener('dblclick', haltHeaderEvents);
+      input.addEventListener('dragstart', haltHeaderEvents);
+      input.addEventListener('input', () => {
+        updateDirectEditPrompt(input.dataset.scopeId, input.dataset.promptUid, { label: input.value || '제목 없음' });
       });
     });
 
@@ -511,10 +537,7 @@
     const prompts = getProgramBuilderPromptList(scopeId, section);
     if (prompts.length <= 1) return;
 
-    const nextPrompts = prompts.filter(prompt => prompt.uid !== promptUid).map((prompt, index) => ({
-      ...prompt,
-      label: `프롬프트 ${index + 1}`
-    }));
+    const nextPrompts = prompts.filter(prompt => prompt.uid !== promptUid);
 
     prompts.forEach((prompt, index) => {
       if (prompt.uid === promptUid) {
@@ -636,11 +659,18 @@
     const [moved] = nextPrompts.splice(sourceIndex, 1);
     nextPrompts.splice(targetIndex, 0, moved);
 
-    saveProgramBuilderPromptList(scopeId, nextPrompts.map((prompt, index) => ({
-      ...prompt,
-      label: `프롬프트 ${index + 1}`
-    })));
+    saveProgramBuilderPromptList(scopeId, nextPrompts);
     renderPanels();
+  }
+
+  function updateDirectEditPrompt(scopeId, promptUid, changes) {
+    const section = getSectionByScopeId(scopeId);
+    if (!section) return;
+
+    const prompts = getProgramBuilderPromptList(scopeId, section).map(prompt =>
+      prompt.uid === promptUid ? { ...prompt, ...changes } : prompt
+    );
+    saveProgramBuilderPromptList(scopeId, prompts);
   }
 
   function expandProgramBuilderPrompt(scopeId, promptUid) {

@@ -783,6 +783,10 @@ body {
   min-height: 500px;
 }
 
+.prompt-card--direct-edit {
+  box-shadow: var(--shadow);
+}
+
 .prompt-list--program-builder {
   display: flex !important;
   flex-direction: row !important;
@@ -818,6 +822,10 @@ body {
 }
 
 .prompt-list--program-builder .prompt-body-row {
+  display: block;
+}
+
+.prompt-card--direct-edit .prompt-body-row {
   display: block;
 }
 
@@ -857,6 +865,26 @@ body {
 
 .prompt-card--resizable .prompt-card-header[data-expandable="true"] {
   cursor: grab;
+}
+
+.prompt-title-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.prompt-title-input:focus {
+  border-color: var(--primary-soft);
+  box-shadow: 0 0 0 3px rgba(234, 0, 44, 0.1);
 }
 
 .prompt-card--dragging {
@@ -935,6 +963,10 @@ body {
   max-height: none;
 }
 
+.prompt-card--direct-edit .prompt-body {
+  max-height: none;
+}
+
 .prompt-editor {
   flex: 1;
   min-height: 220px;
@@ -955,6 +987,11 @@ body {
   margin-bottom: 14px;
 }
 
+.prompt-card--direct-edit .prompt-editor {
+  min-height: 180px;
+  margin-bottom: 14px;
+}
+
 .prompt-live-editor {
   display: block;
   color: var(--text);
@@ -963,6 +1000,11 @@ body {
 
 .prompt-list--program-builder .copy-btn {
   align-self: auto;
+}
+
+.prompt-card--direct-edit .copy-btn {
+  width: 100%;
+  justify-content: center;
 }
 
 .prompt-note-box {
