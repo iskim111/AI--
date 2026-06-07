@@ -352,6 +352,7 @@
     const fallbackPrompts = section.prompts;
     const uniformWidth = section.uniformWidth || 220;
     const layoutVersion = section.layoutVersion || '';
+    const resetStoredPromptsOnVersionChange = !!section.resetStoredPromptsOnVersionChange;
     const fallbackByUid = new Map(
       fallbackPrompts.map((prompt, index) => [prompt.uid || `prompts-${index}`, prompt])
     );
@@ -392,7 +393,7 @@
     try {
       const storedVersion = localStorage.getItem(getProgramBuilderPromptListVersionKey(scopeId));
       if (layoutVersion && storedVersion !== layoutVersion) {
-        if (!prompts || !prompts.length) {
+        if (resetStoredPromptsOnVersionChange || !prompts || !prompts.length) {
           normalized = fallbackPrompts.map((prompt, index) => ({
             uid: prompt.uid || `prompts-${index}`,
             label: prompt.label || `프롬프트 ${index + 1}`,

@@ -606,7 +606,8 @@
           icon: 'lightbulb',
           className: 'prompt-list--wrap-up',
           directEdit: true,
-          layoutVersion: 'wrap-up-v1',
+          layoutVersion: 'wrap-up-v2',
+          resetStoredPromptsOnVersionChange: true,
           prompts: [
             {
               label: '바이브코딩 개념 설명',
@@ -620,7 +621,8 @@
           icon: 'quiz',
           className: 'prompt-list--wrap-up',
           directEdit: true,
-          layoutVersion: 'wrap-up-v1',
+          layoutVersion: 'wrap-up-v2',
+          resetStoredPromptsOnVersionChange: true,
           prompts: [
             {
               label: '일정관리 프로그램 프롬프트',
@@ -634,7 +636,8 @@
           icon: 'description',
           className: 'prompt-list--wrap-up',
           directEdit: true,
-          layoutVersion: 'wrap-up-v1',
+          layoutVersion: 'wrap-up-v2',
+          resetStoredPromptsOnVersionChange: true,
           prompts: [
             {
               label: 'MD 파일 관리 프롬프트',
