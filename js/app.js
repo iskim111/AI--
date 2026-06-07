@@ -322,6 +322,9 @@
 
   function getStoredPromptText(id, fallback) {
     try {
+      if (id.startsWith('wrap-up-')) {
+        return fallback;
+      }
       return localStorage.getItem(getPromptStorageKey(id)) || fallback;
     } catch {
       return fallback;
