@@ -299,7 +299,7 @@
       ${prompt.fileRef ? `<div class="prompt-file-ref">업로드 파일: <code>${prompt.fileRef}</code></div>` : ''}
       <div class="prompt-body-row">
         ${directEdit
-          ? `<textarea class="prompt-editor prompt-live-editor" id="prompt-input-${id}" data-prompt-id="${id}" placeholder="여기에 프롬프트를 바로 작성하세요.">${escapeHtml(prompt.text)}</textarea>`
+          ? `<textarea class="prompt-editor prompt-live-editor" id="prompt-input-${id}" data-prompt-id="${id}" placeholder="여기에 프롬프트를 바로 작성하세요.">${escapeHtml(getStoredPromptText(id, prompt.text))}</textarea>`
           : `<div class="prompt-body" id="prompt-${id}" data-original-text="${escapeHtml(prompt.text)}">${formatPromptText(getStoredPromptText(id, prompt.text))}</div>
         ${prompt.editable ? `<textarea class="prompt-editor hidden" id="editor-${id}">${escapeHtml(getStoredPromptText(id, prompt.text))}</textarea>` : ''}`
         }
