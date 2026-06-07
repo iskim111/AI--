@@ -987,6 +987,19 @@
           </div>
         `).join('')}
       </div>
+      ${section.supplement ? `
+        <div class="app-link-supplement">
+          ${section.supplement.image ? `
+            <img
+              class="app-link-supplement-image"
+              src="${section.supplement.image.src}"
+              alt="${escapeHtml(section.supplement.image.alt || '')}"
+              loading="lazy"
+            >
+          ` : ''}
+          ${section.supplement.text ? `<p class="app-link-supplement-text">${section.supplement.text}</p>` : ''}
+        </div>
+      ` : ''}
     </div>`;
   }
 

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560" role="img" aria-labelledby="title desc">
+  <title id="title">Python 설치 시 PATH 체크 안내</title>
+  <desc id="desc">Python 설치 화면 하단의 Add python.exe to PATH 체크박스를 강조한 안내 이미지</desc>
+  <defs>
+    <linearGradient id="sidebar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d9ecff"/>
+      <stop offset="100%" stop-color="#fff6d8"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="720" height="560" rx="18" fill="#f3f4f6"/>
+  <rect x="18" y="18" width="684" height="524" rx="12" fill="#ffffff" filter="url(#shadow)"/>
+  <rect x="18" y="18" width="684" height="44" rx="12" fill="#f1f1f1"/>
+  <text x="34" y="46" font-family="'Noto Sans KR', sans-serif" font-size="18" fill="#4b5563">Python 3.14.5 (64-bit) Setup</text>
+  <rect x="18" y="62" width="170" height="480" fill="url(#sidebar)"/>
+  <circle cx="103" cy="255" r="56" fill="#3776ab"/>
+  <circle cx="133" cy="285" r="56" fill="#ffd343"/>
+  <text x="44" y="420" font-family="'Noto Sans KR', sans-serif" font-size="28" fill="#444444">python</text>
+  <text x="78" y="454" font-family="'Noto Sans KR', sans-serif" font-size="20" fill="#6b7280">for</text>
+  <text x="28" y="500" font-family="'Noto Sans KR', sans-serif" font-size="28" fill="#444444">windows</text>
+  <text x="220" y="118" font-family="'Noto Sans KR', sans-serif" font-size="28" font-weight="700" fill="#111827">Install Python 3.14.5 (64-bit)</text>
+  <text x="220" y="156" font-family="'Noto Sans KR', sans-serif" font-size="17" fill="#374151">Select Install Now to install Python with default settings.</text>
+  <text x="220" y="182" font-family="'Noto Sans KR', sans-serif" font-size="17" fill="#374151">Choose Customize to enable or disable features.</text>
+  <text x="220" y="235" font-family="'Noto Sans KR', sans-serif" font-size="19" fill="#1d4ed8">→ Install Now</text>
+  <text x="220" y="262" font-family="'Noto Sans KR', sans-serif" font-size="14" fill="#60a5fa">C:\Users\PC2504\AppData\Local\Programs\Python\Python314</text>
+  <text x="220" y="312" font-family="'Noto Sans KR', sans-serif" font-size="19" fill="#1d4ed8">→ Customize installation</text>
+  <text x="220" y="338" font-family="'Noto Sans KR', sans-serif" font-size="14" fill="#60a5fa">Choose location and features</text>
+  <rect x="204" y="388" width="390" height="104" fill="none" stroke="#ef4444" stroke-width="6"/>
+  <rect x="220" y="404" width="18" height="18" rx="3" fill="#ffffff" stroke="#9ca3af" stroke-width="2"/>
+  <rect x="220" y="438" width="18" height="18" rx="3" fill="#ffffff" stroke="#9ca3af" stroke-width="2"/>
+  <text x="248" y="419" font-family="'Noto Sans KR', sans-serif" font-size="16" fill="#111827">Use admin privileges when installing py.exe</text>
+  <text x="248" y="453" font-family="'Noto Sans KR', sans-serif" font-size="16" font-weight="700" fill="#111827">Add python.exe to PATH</text>
+  <rect x="604" y="454" width="80" height="34" rx="6" fill="#f9fafb" stroke="#d1d5db"/>
+  <text x="626" y="476" font-family="'Noto Sans KR', sans-serif" font-size="15" fill="#374151">Cancel</text>
+</svg>

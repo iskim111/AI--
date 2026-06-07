@@ -573,6 +573,42 @@ body {
   margin-top: auto;
 }
 
+.app-link-supplement {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: start;
+  align-items: flex-start;
+  width: calc((50% - 10px) * 0.52);
+  margin-top: 40px;
+}
+
+.app-link-supplement--col-2 {
+  grid-column: 2;
+}
+
+.app-link-supplement-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.app-link-supplement-text {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--text-primary);
+  word-break: keep-all;
+  text-align: left;
+  white-space: nowrap;
+}
+
 /* File Cards */
 .file-grid {
   display: grid;
@@ -860,6 +896,22 @@ body {
   background: #fafafa;
   border-bottom: 1px solid var(--border);
   gap: 12px;
+}
+
+.prompt-list--wrap-up .prompt-card-header {
+  display: none;
+}
+
+.prompt-list--wrap-up .prompt-card {
+  width: 70%;
+}
+
+.prompt-list--wrap-up .copy-btn {
+  display: none;
+}
+
+.prompt-list--wrap-up .prompt-note-box {
+  display: none;
 }
 
 .prompt-card-header[data-expandable="true"] {
@@ -1464,5 +1516,7 @@ body {
   .app-link-grid--cols-2,
   .app-link-grid--cols-3,
   .app-link-grid--cols-4 { grid-template-columns: 1fr; }
+  .app-link-supplement { width: 100%; }
+  .app-link-supplement--col-2 { grid-column: 1; }
   .prompt-list--program-builder { padding-bottom: 6px; }
 }

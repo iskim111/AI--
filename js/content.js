@@ -25,7 +25,15 @@
               url: 'https://update.code.visualstudio.com/latest/win32-x64-user/stable',
               urlLabel: 'VS Code 다운로드 (x64)'
             }
-          ]
+          ],
+          supplement: {
+            alignColumn: 2,
+            image: {
+              src: 'assets/images/python-path-checkbox-guide.svg',
+              alt: 'Python 설치 화면에서 Add python.exe to PATH 체크박스를 강조한 안내 이미지'
+            },
+            text: '※ 파이썬 설치 시 아래 체크박스 반드시 체크해 주세요'
+          }
         },
         {
           type: 'app-links',
@@ -582,6 +590,56 @@
             'Cursor에 세 문서를 읽게 한 뒤 MVP 구현 범위를 확인합니다.',
             'Python으로 데이터 처리, 보고서, 대시보드, GUI 중 하나를 구현합니다.',
             '실행 명령, 결과 파일, 한계, 다음 개선 계획을 README.md에 정리합니다.'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'wrap-up',
+      label: '마무리',
+      title: '마무리',
+      description: '',
+      sections: [
+        {
+          type: 'prompts',
+          title: '바이브 코딩',
+          icon: 'lightbulb',
+          className: 'prompt-list--wrap-up',
+          directEdit: true,
+          layoutVersion: 'wrap-up-v1',
+          prompts: [
+            {
+              label: '바이브코딩 개념 설명',
+              text: '바이브 코딩(Vibe Coding)은 개발자가 코드를 직접 한 줄 한 줄 타이핑하는 대신, AI(대규모 언어 모델)에게 자연어(일상 언어)로 지시하여 결과물의 \'느낌(Vibe)\'과 방향성을 조율하며 소프트웨어를 개발하는 방식을 뜻합니다.\n\nOpenAI의 공동 창업자인 안드레이 카파시(Andrej Karpathy)가 언급하면서 대중화된 소프트웨어 개발 트렌드입니다. "가장 핫한 프로그래밍 언어는 영어(인간의 언어)다"라는 개념이 극대화된 형태라고 볼 수 있습니다.'
+            }
+          ]
+        },
+        {
+          type: 'prompts',
+          title: '질문의 기술',
+          icon: 'quiz',
+          className: 'prompt-list--wrap-up',
+          directEdit: true,
+          layoutVersion: 'wrap-up-v1',
+          prompts: [
+            {
+              label: '일정관리 프로그램 프롬프트',
+              text: '# 일정관리 프로그램 프롬프트\n\n## 1. 프로그램 목적\n개인의 일정을 등록, 수정, 삭제하고 날짜별로 한눈에 확인할 수 있는 일정관리 프로그램을 만드는 것이 목적입니다.\n\n## 2. 주요 사용자\n- 일정 관리를 처음 시작하는 일반 사용자\n- 개인 업무와 약속을 함께 관리하려는 직장인\n- 단순하고 쉬운 인터페이스를 원하는 초보자\n\n## 3. 핵심 기능\n- 일정 등록\n- 일정 수정\n- 일정 삭제\n- 날짜별 일정 조회\n- 오늘 일정 보기\n- 중요한 일정 표시\n\n## 4. 입력 데이터와 출력 결과\n입력 데이터:\n- 일정 제목\n- 날짜\n- 시간\n- 설명\n- 중요 여부\n\n출력 결과:\n- 날짜별 일정 목록\n- 오늘의 일정 목록\n- 중요 일정 목록\n\n## 5. 화면 구성\n- 상단: 프로그램 제목\n- 왼쪽: 달력 또는 날짜 선택 영역\n- 오른쪽: 선택한 날짜의 일정 목록\n- 하단 또는 팝업: 일정 추가/수정 입력창\n\n## 6. 개발 우선순위\n1. 일정 등록 기능\n2. 일정 목록 보기 기능\n3. 수정/삭제 기능\n4. 중요 일정 표시 기능\n5. 화면 정리 및 사용성 개선\n\n## 7. AI에게 바로 전달할 수 있는 예시 프롬프트\n```markdown\n개인용 일정관리 프로그램을 만들어줘.\n\n[요구사항]\n1. 일정 등록, 수정, 삭제 기능\n2. 날짜별 일정 조회 기능\n3. 오늘 일정만 따로 보기\n4. 중요한 일정 체크 기능\n5. 초보자도 쉽게 사용할 수 있는 단순한 화면 구성\n\n[출력물]\n- 실행 가능한 전체 코드\n- 필요한 파일 구조 설명\n- 실행 방법 안내\n```\n'
+            }
+          ]
+        },
+        {
+          type: 'prompts',
+          title: 'MD 파일 사용',
+          icon: 'description',
+          className: 'prompt-list--wrap-up',
+          directEdit: true,
+          layoutVersion: 'wrap-up-v1',
+          prompts: [
+            {
+              label: 'MD 파일 관리 프롬프트',
+              text: '프로젝트 진행함에 있어 AI 가 지켜야할 지침.MD 파일 관리\n이 프로젝트의 정체성을 파악해서 정체성.MD 파일로 정리하고 업데이트를 해줘\n이 프로젝트의 변경 이력을 히스토리.MD 파일로 정리하고 업데이트 해줘\n\n[요청]\n1. AI가 지켜야 할 작업 원칙을 지침.MD 파일로 정리\n2. 프로젝트의 정체성을 정체성.MD 파일로 정리 및 업데이트\n3. 프로젝트 변경 이력을 히스토리.MD 파일로 정리 및 업데이트\n4. 각 MD 파일의 역할을 초보자도 이해하기 쉽게 설명'
+            }
           ]
         }
       ]
