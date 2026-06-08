@@ -606,12 +606,13 @@
           icon: 'lightbulb',
           className: 'prompt-list--wrap-up',
           directEdit: true,
-          layoutVersion: 'wrap-up-v3',
+          layoutVersion: 'wrap-up-v4',
           resetStoredPromptsOnVersionChange: true,
           prompts: [
             {
+              uid: 'vibe-coding-v2',
               label: '바이브코딩 개념 설명',
-              text: '바이브 코딩(Vibe Coding)은 개발자가 코드를 직접 한 줄 한 줄 타이핑하는 대신, AI(대규모 언어 모델)에게 자연어(일상 언어)로 지시하여 결과물의 \'느낌(Vibe)\'과 방향성을 조율하며 소프트웨어를 개발하는 방식을 뜻합니다.\n\nOpenAI의 공동 창업자인 안드레이 카파시(Andrej Karpathy)가 언급하면서 대중화된 소프트웨어 개발 트렌드입니다. "가장 핫한 프로그래밍 언어는 영어(인간의 언어)다"라는 개념이 극대화된 형태라고 볼 수 있습니다.'
+              text: '바이브 코딩(Vibe Coding)은 개발자가 코드를 직접 한 줄 한 줄 타이핑하는 대신, AI(대규모 언어 모델)에게 자연어(일상 언어)로 지시하여 결과물의 \'느낌(Vibe)\'과 방향성을 조율하며 소프트웨어를 개발하는 방식을 뜻합니다.\n\nOpenAI의 공동 창업자인 안드레이 카파시(Andrej Karpathy)가 언급하면서 대중화된 소프트웨어 개발 트렌드입니다. "가장 핫한 프로그래밍 언어는 인간의 언어다"라는 개념이 극대화된 형태라고 볼 수 있습니다.'
             }
           ]
         },
