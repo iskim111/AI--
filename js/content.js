@@ -364,6 +364,10 @@
                   </div>
                 </div>
               </div>
+              <div class="compare-bridge" role="note" aria-label="스트림릿 설명">
+                <strong>스트림릿(Streamlit)</strong>은 데이터 분석가가 <strong>그래프·통계·AI 결과를 빠르게 대시보드로 보여주기 위한 도구</strong>입니다.
+                <span><strong>장점:</strong> 파이썬만으로 빠르게 만들 수 있음 | <strong>단점:</strong> 복잡한 대형 웹서비스 개발에는 한계가 있음</span>
+              </div>
             </div>
           `
         },
