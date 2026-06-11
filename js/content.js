@@ -665,7 +665,7 @@
           icon: 'picture_as_pdf',
           wrapperClass: 'embed-frame-wrap--pdf',
           frameClass: 'embed-frame--pdf',
-          src: '못다한%20이야기.pdf?v=3#page=1&navpanes=0&pagemode=none&zoom=page-width'
+          src: 'assets/docs/as-story.pdf?v=4#page=1&navpanes=0&pagemode=none&zoom=page-width'
         },
         {
           type: 'files',
