@@ -963,8 +963,8 @@
     return `<div class="section">
       ${section.title ? sectionTitle(section, section.icon) : ''}
       ${section.description ? `<p class="panel-desc" style="margin-bottom:16px">${section.description}</p>` : ''}
-      <div class="embed-frame-wrap">
-        <iframe class="embed-frame" src="${section.src}" title="${escapeHtml(section.title || '임베드 콘텐츠')}"></iframe>
+      <div class="embed-frame-wrap${section.wrapperClass ? ` ${section.wrapperClass}` : ''}">
+        <iframe class="embed-frame${section.frameClass ? ` ${section.frameClass}` : ''}" src="${section.src}" title="${escapeHtml(section.title || '임베드 콘텐츠')}"></iframe>
       </div>
     </div>`;
   }

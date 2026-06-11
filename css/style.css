@@ -1176,6 +1176,17 @@ body {
   background: #fff;
 }
 
+.embed-frame-wrap--pdf {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.embed-frame--pdf {
+  min-height: 84vh;
+  height: 84vh;
+}
+
 .excel-upload-box {
   background: var(--surface);
   border: 1px solid var(--border);
