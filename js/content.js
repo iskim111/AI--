@@ -660,11 +660,12 @@
       description: '',
       sections: [
         {
-          type: 'image',
+          type: 'embed',
           title: '못다한 이야기',
-          icon: 'image',
-          src: 'assets/images/as-motdahan-story.png',
-          alt: '못다한 이야기 화면 설명 이미지'
+          icon: 'picture_as_pdf',
+          wrapperClass: 'embed-frame-wrap--pdf',
+          frameClass: 'embed-frame--pdf',
+          src: '못다한%20이야기.pdf?v=3#page=1&navpanes=0&pagemode=none&zoom=page-width'
         },
         {
           type: 'files',
